@@ -90,16 +90,25 @@ class StreamingASR:
     # ── 帧级处理 ──
 
     def feed_audio(self, audio_chunk: np.ndarray) -> str | None:
-        """喂入一帧音频，如果检测到句子标点则返回待翻译句子。"""
+        """喂入一帧音频，如果检测到句子标点则返回待翻译句子。
+
+        vLLM 后端：逐帧流式识别 + 标点驱动提交。
+        Transformers 后端：纯累积缓冲，永远返回 None。实际识别延迟到
+          finish_session（由 server.py 的 VAD 静音超时触发）。
+          原因：
+            1) `_run_batch_recognize` 是对累积 buffer 的全量重识别，每次重
+               算 O(N) 的前缀。若在 feed_audio 里周期性触发，总工作量是 O(N²)。
+            2) `_extract` 的前缀假设（committed_text 是新 full_text 的前
+               缀）在全量重识别下容易被同音字误识打破，导致字符索引错位、
+               emit 出乱七八糟的碎片。
+          所以把增量 emit 完全让给 vLLM 后端，Transformers 后端只做"整段
+          识别"。
+        """
         if _USE_VLLM:
             self.model.streaming_transcribe(audio_chunk, self.state)
             return self._try_extract_sentence_vllm()
         else:
             self._audio_buffer.append(audio_chunk)
-            total_samples = sum(len(c) for c in self._audio_buffer)
-            if total_samples >= int(self._recognize_interval_sec * SAMPLE_RATE):
-                self._run_batch_recognize()
-                return self._try_extract_sentence_transformers()
             return None
 
     # ── 内部方法 ──
