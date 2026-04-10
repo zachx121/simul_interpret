@@ -1,0 +1,16 @@
+# ── 服务端 + 客户端共用 ──────────────────────
+numpy
+torch
+torchaudio
+soundfile
+
+# ── 服务端 ───────────────────────────────────
+fastapi
+uvicorn[standard]
+qwen-asr[vllm]          # Qwen3-ASR + vLLM backend (流式推理)
+qwen-tts                 # Qwen3-TTS
+vllm                     # Qwen3.5-4B 翻译推理
+
+# ── 客户端 ───────────────────────────────────
+websockets
+pyaudio
