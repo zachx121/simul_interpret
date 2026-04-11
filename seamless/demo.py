@@ -14,45 +14,16 @@ SeamlessStreaming 最小流式 Demo.
   --max-len-b
   --min-unit-chunk-size 25 卡顿跳跃感太明显了还是用默认的50吧
   --first-unit-chunk-size 40 首包用小阈值还行
-  --decision-threshold 阈值越低，越容易更早出第一段翻译文本，但是更容易出现不稳定 partial、重复、后续改写
+  --decision-threshold 0.5 更早出翻译，但质量不好说；阈值越低，越容易更早出第一段翻译文本，但是更容易出现不稳定 partial、重复、后续改写
+  --min-starting-wait-w2vbert 196
 运行示例：
+  # s2tt
   python3 demo.py --mode s2tt --tgt-lang eng --audio outputs_tts_16khz.wav
   python3 demo.py --mode s2tt --tgt-lang eng --audio 米奇沃克斯.wav
-    ```
-    [t= 0.81s chunk=320ms   6/55 rms=0.1528 peak=0.4420] 📝 Hi, I
-    [t= 1.19s chunk=320ms   9/55 rms=0.0000 peak=0.0000] 📝 'm in Singapore to talk
-    [t= 1.30s chunk=320ms  10/55 rms=0.0819 peak=0.2890] 📝 to you
-    [t= 1.96s chunk=320ms  17/55 rms=0.0793 peak=0.3585] 📝 . The weather in Singapore is very
-    [t= 2.06s chunk=320ms  18/55 rms=0.1408 peak=0.4272] 📝 nice
-    [t= 2.37s chunk=320ms  22/55 rms=0.1157 peak=0.4364] 📝 today
-    [t= 2.47s chunk=320ms  23/55 rms=0.1035 peak=0.5221] 📝 .
-    [t= 2.85s chunk=320ms  33/55 rms=0.1176 peak=0.4702] 📝 Let's talk
-    [t= 3.00s chunk=320ms  35/55 rms=0.0940 peak=0.2858] 📝 about
-    [t= 3.72s chunk=320ms  41/55 rms=0.1386 peak=0.5683] 📝 how to accurately calculate the final result of a flow meter
-    [t= 3.94s chunk=320ms  44/55 rms=0.0919 peak=0.3621] 📝 and
-    [t= 4.10s chunk=320ms  45/55 rms=0.1091 peak=0.4345] 📝 reasonably estimate
-    [t= 4.41s chunk=320ms  49/55 rms=0.1236 peak=0.5049] 📝 how
-    [t= 4.78s chunk=320ms  53/55 rms=0.0000 peak=0.0001] 📝 much error
-    [t= 5.12s chunk=320ms  55/59] 📝 it will cause to the entire system.
-    [demo] total elapsed: 5.4s
-    ```
+  # s2st
   python3 demo.py --mode s2st --tgt-lang eng --audio outputs_tts_16khz.wav --out out.wav
   python3 demo.py --mode s2st --tgt-lang eng --audio outputs_tts_16khz.wav --out out.wav --first-unit-chunk-size 40
   python3 demo.py --mode s2st --tgt-lang eng --audio 米奇沃克斯.wav --out out.wav --first-unit-chunk-size 40
-
-    ```
-    [demo] built in 14.8s
-    [t= 1.16s chunk=320ms   6/55 rms=0.1528 peak=0.4420] 🔊 +15360 samples (~0.96s)
-    [t= 1.82s chunk=320ms   9/55 rms=0.0000 peak=0.0000] 🔊 +20160 samples (~1.26s)
-    [t= 3.25s chunk=320ms  17/55 rms=0.0793 peak=0.3585] 🔊 +35520 samples (~2.22s)
-    [t= 4.44s chunk=320ms  23/55 rms=0.1035 peak=0.5221] 🔊 +13440 samples (~0.84s)
-    [t= 5.25s chunk=320ms  35/55 rms=0.0940 peak=0.2858] 🔊 +13440 samples (~0.84s)
-    [t= 6.44s chunk=320ms  41/55 rms=0.1386 peak=0.5683] 🔊 +45440 samples (~2.84s)
-    [t= 7.18s chunk=320ms  45/55 rms=0.1091 peak=0.4345] 🔊 +20480 samples (~1.28s)
-    [t= 8.96s chunk=320ms  55/59] 🔊 +39040 samples (~2.44s)
-    [demo] wrote out.wav: 12.68s
-    [demo] total elapsed: 9.3s
-    ```
   # --debug模式是重新执行了ASR、S2TT的，所以耗时会显著增加
   python3 demo.py --mode s2st --tgt-lang eng --audio outputs_tts_16khz.wav --out out.wav  --debug
 
